@@ -31,9 +31,12 @@ canvas{width:100%;height:100%;display:block}
 #end{inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:8%;font:600 3.4em Fredoka;text-shadow:0 0 24px #ffb347}
 #end .b{position:absolute;right:3%;bottom:5%;font-size:.3em}
 #fade{inset:0;background:#000;transition:opacity .7s}
-#hud{position:absolute;top:2%;left:2%;right:2%;display:flex;justify-content:space-between;pointer-events:none;z-index:40}
-#hud button{pointer-events:auto;background:rgba(20,10,35,.75);backdrop-filter:blur(6px);border:1px solid #fff4;color:#fff;border-radius:50%;width:2.4em;height:2.4em;cursor:pointer;transition:.2s}
+#hud{position:absolute;top:2%;left:2%;right:2%;display:flex;justify-content:space-between;align-items:center;pointer-events:none;z-index:45}
+#hud .hud-group{display:flex;gap:10px;pointer-events:auto}
+#hud button{pointer-events:auto;background:rgba(20,10,35,.85);backdrop-filter:blur(6px);border:1.5px solid rgba(255,255,255,.35);color:#fff;border-radius:50%;width:clamp(40px,5.5vw,46px);height:clamp(40px,5.5vw,46px);font-size:clamp(16px,2.2vw,20px);cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.45)}
 #hud button:hover{transform:scale(1.1);border-color:var(--pink)}
+#pauseMenu{inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(12,6,26,.88);backdrop-filter:blur(12px);z-index:85;text-align:center}
+#pauseMenu h1{font:600 clamp(2.4em,6vw,3.4em) Fredoka,sans-serif;color:#fff;text-shadow:0 0 30px var(--pink),0 3px 0 #b01a47;margin:0 0 .2em}
 #letter{position:absolute;inset:0;margin:auto;width:92%;max-width:540px;height:92%;max-height:510px;display:flex;flex-direction:column;background:linear-gradient(to bottom,#fffcf8,#fff8f0 92%,#fff1f5);backdrop-filter:blur(14px);color:#332222;border:1.5px solid #ffccd5;border-radius:22px;box-shadow:0 18px 50px rgba(0,0,0,.75),0 0 35px rgba(255,143,191,.35);transform:scale(.95);z-index:60;box-sizing:border-box}
 #letter.show{transform:none}
 #lt{flex:1;overflow-y:auto;line-height:1.8;font-size:15px;font-family:'Georgia',serif;padding:24px 26px 12px;scrollbar-width:thin;scrollbar-color:#ff758c #fff1f5}
@@ -52,10 +55,13 @@ canvas{width:100%;height:100%;display:block}
 .done-btn{background:linear-gradient(135deg,#ff416c,#ff4b2b);color:#fff;border:none;border-radius:25px;padding:9px 32px;font-family:Fredoka,sans-serif;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 18px rgba(255,65,108,.5);transition:transform .15s,box-shadow .2s}
 .done-btn:hover:not(:disabled){transform:translateY(-2px) scale(1.04)}
 .done-btn:disabled{opacity:.45;cursor:default;box-shadow:none}
-#tc{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom,0));display:none;justify-content:space-between;padding:0 16px;pointer-events:none;z-index:70}
-#tc div{display:flex;gap:12px;pointer-events:auto}
-#tc button{width:64px;height:64px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:rgba(42,26,74,.85);color:#fff;font:600 15px Fredoka;touch-action:none;box-shadow:0 4px 15px rgba(0,0,0,.5);transition:transform .1s}
-#tc button:active{transform:scale(.92);background:rgba(255,111,168,.9);border-color:#fff}
+#tc{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0));display:none;justify-content:space-between;padding:0 clamp(16px,4vw,36px);pointer-events:none;z-index:70}
+#tc div{display:flex;gap:clamp(12px,2.5vw,22px);pointer-events:auto}
+#tc button{width:clamp(76px,14.5vw,92px);height:clamp(76px,14.5vw,92px);border-radius:50%;border:2.5px solid rgba(255,255,255,.65);background:rgba(26,14,48,.88);backdrop-filter:blur(8px);color:#fff;font:600 clamp(16px,3.2vw,20px) Fredoka,sans-serif;touch-action:none;box-shadow:0 6px 20px rgba(0,0,0,.65),0 0 15px rgba(255,143,191,.25);transition:transform .1s,background .15s,box-shadow .15s;user-select:none;-webkit-user-select:none}
+#tc button[data-k="l"],#tc button[data-k="r"]{font-size:clamp(28px,5.5vw,38px)}
+#tc button[data-k="u"]{border-color:#00f2fe;box-shadow:0 6px 20px rgba(0,0,0,.65),0 0 18px rgba(0,242,254,.35)}
+#tc button[data-k="a"]{border-color:#ff4d6d;box-shadow:0 6px 20px rgba(0,0,0,.65),0 0 18px rgba(255,77,109,.4)}
+#tc button:active{transform:scale(.92);background:rgba(255,111,168,.95);border-color:#fff;box-shadow:0 0 25px rgba(255,111,168,.85)}
 #tc{visibility:hidden}
 body.touch #tc{display:flex}
 body.touch #dlg{bottom:12%}
@@ -68,7 +74,21 @@ html,body{touch-action:none;user-select:none;-webkit-user-select:none}
 <body>
 <div id="w"><div id="g">
 <canvas id="c" width="960" height="540"></canvas>
-<div id="hud"><button id="pause" aria-label="Pause">⏸</button><button id="fs" aria-label="Fullscreen">⛶</button><button id="help" aria-label="Help">?</button></div>
+<div id="hud">
+  <div class="hud-group">
+    <button id="pause" aria-label="Pause">⏸</button>
+    <button id="mute" aria-label="Mute">🔊</button>
+  </div>
+  <div class="hud-group">
+    <button id="fs" aria-label="Fullscreen">⛶</button>
+    <button id="help" aria-label="Help">?</button>
+  </div>
+</div>
+<div id="pauseMenu" class="o">
+  <h1>GAME PAUSED ⏸</h1>
+  <p style="font-size:1.15em;opacity:.9;margin-bottom:1.4em;color:#ffeef2;">Take your time, Pookie is waiting... 🎀</p>
+  <button class="b" id="resumeBtn">Resume ▶</button>
+</div>
 <div id="start" class="o show"><h1>THE POOKIE PARADOX🎀💀</h1><button class="b" id="sb">Start Game</button></div>
 <div id="banner" class="o"></div><div id="warn" class="o"></div>
 <button id="call" class="b o">📞 Call Me</button>
@@ -176,15 +196,21 @@ const FL=(r=>Array.from({length:130},()=>({x:r()*W,y:440+r()*100,c:['#ff8fbf','#
 const TU=(r=>Array.from({length:190},()=>({x:r()*W,y:300+r()*240,c:['#e63946','#ff8c1a','#ffcc00','#ff5a36'][r()*4|0],p:r()*6})).sort((a,b)=>a.y-b.y))(R(5));
 
 // ---------- AUDIO SYSTEM ----------
-let AC,mus;
+let AC,mus,muted=false;
 function ac(){AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state=='suspended')AC.resume()}
-function sfx(f,d=.15,t='square',v=.05,s=0){try{ac();const n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.setValueAtTime(f,n);if(s)o.frequency.exponentialRampToValueAtTime(Math.max(30,f+s),n+d);g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g).connect(AC.destination);o.start();o.stop(n+d)}catch(e){}}
-function synth(){if(mus)return;mus=1;ac();const ch=[[293.66,369.99,440.00,587.33],[220.00,277.18,329.63,440.00],[196.00,246.94,293.66,392.00],[220.00,277.18,329.63,440.00]];let i=0;const play=()=>{const n=AC.currentTime;ch[i++%4].forEach(f=>{const o=AC.createOscillator(),g=AC.createGain(),l=AC.createBiquadFilter();o.type='sawtooth';l.type='lowpass';l.frequency.value=750;o.frequency.value=f;o.detune.value=Math.random()*8-4;g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(.028,n+1.2);g.gain.linearRampToValueAtTime(0,n+3.9);o.connect(l).connect(g).connect(AC.destination);o.start(n);o.stop(n+4.0)})};play();setInterval(play,3900)}
+function sfx(f,d=.15,t='square',v=.05,s=0){
+  if(muted) return;
+  try{ac();const n=AC.currentTime,o=AC.createOscillator(),g=AC.createGain();o.type=t;o.frequency.setValueAtTime(f,n);if(s)o.frequency.exponentialRampToValueAtTime(Math.max(30,f+s),n+d);g.gain.setValueAtTime(v,n);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g).connect(AC.destination);o.start();o.stop(n+d)}catch(e){}
+}
+function synth(){
+  if(muted||mus)return;mus=1;ac();const ch=[[293.66,369.99,440.00,587.33],[220.00,277.18,329.63,440.00],[196.00,246.94,293.66,392.00],[220.00,277.18,329.63,440.00]];let i=0;const play=()=>{if(muted)return;const n=AC.currentTime;ch[i++%4].forEach(f=>{const o=AC.createOscillator(),g=AC.createGain(),l=AC.createBiquadFilter();o.type='sawtooth';l.type='lowpass';l.frequency.value=750;o.frequency.value=f;o.detune.value=Math.random()*8-4;g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(.028,n+1.2);g.gain.linearRampToValueAtTime(0,n+3.9);o.connect(l).connect(g).connect(AC.destination);o.start(n);o.stop(n+4.0)})};play();setInterval(play,3900);
+}
 function music(){
   $('badge').classList.add('show');
   const a=$('bgm');
   a.src=encodeURI(ASSETS.bgmAudio);
   a.volume=.85;
+  a.muted=muted;
   a.onerror=synth;
   const p=a.play();
   if(p)p.catch(synth);
@@ -236,6 +262,7 @@ function spark(x,y,n=30,col){
 
 // ---------- GAME FLOW ----------
 $('sb').onclick=()=>{
+  goFullscreen();
   ac();sfx(660,.2,'triangle');$('start').classList.remove('show');S='intro';SD={on:1,x:-80,y:290,tx:440};
   dlg('pookieemun 🎀',['hey there ig i am your pookieemun... Lets gets starttttttt andddd','Eikhane onk instruction dite ami ashbo! Lekha gulo thik moto porben thank you 😊👍🏻',CTRL],'Next ➔',()=>{
     spark(SD.x+15,SD.y+25,70);SD.on=0;sfx(900,.4,'sine',.06,600);fade(startL1,800);
@@ -345,9 +372,60 @@ function initFinaleFlowers(){
 }
 $('done').onclick=()=>{$('letter').classList.remove('show');fade(()=>{S='finale';initFinaleFlowers();SD.on=0;setTimeout(()=>$('end').classList.add('show'),3500)},900)};
 $('rp').onclick=()=>{$('end').classList.remove('show');S='title';parts=[];P=null;E=[];boss=null;SD.on=0;$('start').classList.add('show')};
-function tp(){paused=!paused;$('pause').textContent=paused?'▶':'⏸'}$('pause').onclick=tp;
-$('fs').onclick=()=>{const d=document,g=d.documentElement;if(d.fullscreenElement){d.exitFullscreen()}else if(g.requestFullscreen){g.requestFullscreen().then(()=>{try{screen.orientation.lock('landscape').catch(()=>{})}catch(e){}}).catch(()=>{})}};
-$('help').onclick=()=>{if(!freeze)dlg('Help ❓',[CTRL],'Got it')};
+function tp(){
+  if(S==='title'||S==='intro') return;
+  paused=!paused;
+  $('pause').textContent=paused?'▶':'⏸';
+  $('pauseMenu').classList.toggle('show',paused);
+  const a=$('bgm');
+  if(paused){
+    if(a&&!a.paused){a.wasPlaying=true;a.pause()}
+  }else{
+    if(a&&a.wasPlaying){a.play().catch(()=>{});a.wasPlaying=false}
+  }
+}
+$('pause').onclick=tp;
+$('resumeBtn').onclick=tp;
+
+function toggleMute(){
+  muted=!muted;
+  $('mute').textContent=muted?'🔇':'🔊';
+  const a=$('bgm');
+  if(a) a.muted=muted;
+}
+$('mute').onclick=toggleMute;
+
+function goFullscreen(){
+  const d=document,el=d.documentElement;
+  const rfs=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
+  if(!d.fullscreenElement&&!d.webkitFullscreenElement&&rfs){
+    const p=rfs.call(el);
+    if(p&&p.then){
+      p.then(()=>{
+        try{if(screen.orientation&&screen.orientation.lock)screen.orientation.lock('landscape').catch(()=>{})}catch(e){}
+      }).catch(()=>{});
+    }
+  }
+}
+$('fs').onclick=()=>{
+  const d=document;
+  if(d.fullscreenElement||d.webkitFullscreenElement){
+    const efs=d.exitFullscreen||d.webkitExitFullscreen||d.mozCancelFullScreen||d.msExitFullscreen;
+    if(efs) efs.call(d).catch(()=>{});
+  }else{
+    goFullscreen();
+  }
+};
+let autoFSDone=false;
+const tryAutoFS=()=>{
+  if(!autoFSDone&&(TOUCH||/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent))){
+    autoFSDone=true;
+    goFullscreen();
+  }
+};
+window.addEventListener('touchstart',tryAutoFS,{passive:true});
+window.addEventListener('pointerdown',tryAutoFS,{passive:true});
+$('help').onclick=()=>{if(!freeze&&!paused)dlg('Help ❓',[CTRL],'Got it')};
 
 // ---------- COMBAT MECHANICS ----------
 const ov=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
@@ -1173,7 +1251,12 @@ let lt=0;
 function loop(t){
   resizeCanvas();
   const dt=Math.min(.033,(t-lt)/1000||0);
-  lt=t;T+=dt;update(dt);draw();
+  lt=t;
+  if(!paused){
+    T+=dt;
+    update(dt);
+  }
+  draw();
   $('tc').style.visibility=(TOUCH&&(S=='l1'||S=='l2'||S=='cottage')&&!freeze&&!paused)?'visible':'hidden';
   requestAnimationFrame(loop);
 }
